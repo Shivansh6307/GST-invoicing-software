@@ -73,7 +73,7 @@
 
     <section>
         <h2>Line Items</h2>
-        <table>
+        <table id="line-items-table">
             <thead>
                 <tr>
                     <th>Description</th>
@@ -83,9 +83,10 @@
                     <th>Rate (₹)</th>
                     <th>Amount (₹)</th>
                     <th>GST Rate (%)</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="line-items-body">
                 <tr>
                     <td><input type="text" name="item-description"></td>
                     <td><input type="text" name="item-hsn"></td>
@@ -102,9 +103,55 @@
                             <option value="28">28%</option>
                         </select>
                     </td>
+                    <td><button type="button" class="remove-row-btn">Remove Row</button></td>
                 </tr>
             </tbody>
         </table>
+        <button type="button" id="add-row-btn">Add Row</button>
     </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var tbody = document.getElementById('line-items-body');
+            var addRowBtn = document.getElementById('add-row-btn');
+
+            function calculateAmount(row) {
+                var quantity = parseFloat(row.querySelector('[name="item-quantity"]').value) || 0;
+                var rate = parseFloat(row.querySelector('[name="item-rate"]').value) || 0;
+                row.querySelector('[name="item-amount"]').value = (quantity * rate).toFixed(2);
+            }
+
+            function attachRowListeners(row) {
+                row.querySelector('[name="item-quantity"]').addEventListener('input', function () {
+                    calculateAmount(row);
+                });
+                row.querySelector('[name="item-rate"]').addEventListener('input', function () {
+                    calculateAmount(row);
+                });
+                row.querySelector('.remove-row-btn').addEventListener('click', function () {
+                    if (tbody.rows.length > 1) {
+                        row.remove();
+                    }
+                });
+            }
+
+            // Attach listeners to the initial row
+            attachRowListeners(tbody.rows[0]);
+
+            addRowBtn.addEventListener('click', function () {
+                var newRow = tbody.rows[0].cloneNode(true);
+                var inputs = newRow.querySelectorAll('input');
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].value = '';
+                }
+                var selects = newRow.querySelectorAll('select');
+                for (var j = 0; j < selects.length; j++) {
+                    selects[j].selectedIndex = 3; // Default to 18%
+                }
+                attachRowListeners(newRow);
+                tbody.appendChild(newRow);
+            });
+        });
+    </script>
 </body>
 </html>
