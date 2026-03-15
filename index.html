@@ -4,111 +4,402 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GST Invoice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f7;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .invoice-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* ── Header ── */
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a5276;
+            color: #fff;
+            padding: 24px 32px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .company-logo {
+            width: 64px;
+            height: 64px;
+            background: #fff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1a5276;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .header-right .field-group {
+            margin-bottom: 6px;
+        }
+
+        .header-right .field-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .header-right label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.85;
+            margin-right: 6px;
+        }
+
+        .header-right input[type="text"],
+        .header-right input[type="date"] {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            color: #fff;
+            padding: 4px 10px;
+            font-size: 14px;
+            width: 160px;
+        }
+
+        .header-right input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .header-right input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        /* ── Body ── */
+        .invoice-body {
+            padding: 28px 32px;
+        }
+
+        /* ── Sections ── */
+        section {
+            margin-bottom: 28px;
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a5276;
+            border-bottom: 2px solid #d4e6f1;
+            padding-bottom: 6px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #5d6d7e;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 4px;
+        }
+
+        .form-field input,
+        .form-field select {
+            border: 1px solid #d4e6f1;
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 14px;
+            color: #333;
+            transition: border-color 0.2s;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus {
+            outline: none;
+            border-color: #2980b9;
+            box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.15);
+        }
+
+        /* ── Details row (seller + client side by side) ── */
+        .details-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        .details-row section {
+            margin-bottom: 0;
+        }
+
+        /* ── Table ── */
+        #line-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        #line-items-table thead {
+            background: #1a5276;
+            color: #fff;
+        }
+
+        #line-items-table th {
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        #line-items-table td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #eaecee;
+        }
+
+        #line-items-table tbody tr:hover {
+            background: #f4f8fb;
+        }
+
+        #line-items-table input,
+        #line-items-table select {
+            width: 100%;
+            border: 1px solid #d4e6f1;
+            border-radius: 4px;
+            padding: 6px 8px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        #line-items-table input:focus,
+        #line-items-table select:focus {
+            outline: none;
+            border-color: #2980b9;
+        }
+
+        #line-items-table input[readonly] {
+            background: #f7f9fb;
+            color: #5d6d7e;
+        }
+
+        /* ── Buttons ── */
+        .remove-row-btn {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .remove-row-btn:hover {
+            background: #c0392b;
+        }
+
+        #add-row-btn {
+            margin-top: 12px;
+            background: #2980b9;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        #add-row-btn:hover {
+            background: #1a6fa0;
+        }
+    </style>
 </head>
 <body>
-    <h1>GST Invoice</h1>
+    <div class="invoice-container">
 
-    <section>
-        <h2>Seller Details</h2>
-        <label for="seller-name">Business Name:</label>
-        <input type="text" id="seller-name" name="seller-name">
-        <br>
-        <label for="seller-address">Address:</label>
-        <input type="text" id="seller-address" name="seller-address">
-        <br>
-        <label for="seller-city">City:</label>
-        <input type="text" id="seller-city" name="seller-city">
-        <br>
-        <label for="seller-state">State:</label>
-        <input type="text" id="seller-state" name="seller-state">
-        <br>
-        <label for="seller-pincode">PIN Code:</label>
-        <input type="text" id="seller-pincode" name="seller-pincode" pattern="[0-9]{6}" maxlength="6">
-        <br>
-        <label for="seller-gstin">GSTIN:</label>
-        <input type="text" id="seller-gstin" name="seller-gstin" maxlength="15">
-        <br>
-        <label for="seller-phone">Phone:</label>
-        <input type="tel" id="seller-phone" name="seller-phone">
-        <br>
-        <label for="seller-email">Email:</label>
-        <input type="email" id="seller-email" name="seller-email">
-    </section>
+        <!-- Header: logo placeholder + invoice number/date -->
+        <div class="invoice-header">
+            <div class="header-left">
+                <div class="company-logo">Your Logo</div>
+                <span class="header-title">GST Invoice</span>
+            </div>
+            <div class="header-right">
+                <div class="field-group">
+                    <label for="invoice-number">Invoice #</label>
+                    <input type="text" id="invoice-number" name="invoice-number" placeholder="INV-001">
+                </div>
+                <div class="field-group">
+                    <label for="invoice-date">Date</label>
+                    <input type="date" id="invoice-date" name="invoice-date">
+                </div>
+            </div>
+        </div>
 
-    <section>
-        <h2>Client Details</h2>
-        <label for="client-name">Client Name:</label>
-        <input type="text" id="client-name" name="client-name">
-        <br>
-        <label for="client-address">Address:</label>
-        <input type="text" id="client-address" name="client-address">
-        <br>
-        <label for="client-city">City:</label>
-        <input type="text" id="client-city" name="client-city">
-        <br>
-        <label for="client-state">State:</label>
-        <input type="text" id="client-state" name="client-state">
-        <br>
-        <label for="client-pincode">PIN Code:</label>
-        <input type="text" id="client-pincode" name="client-pincode" pattern="[0-9]{6}" maxlength="6">
-        <br>
-        <label for="client-gstin">GSTIN:</label>
-        <input type="text" id="client-gstin" name="client-gstin" maxlength="15">
-        <br>
-        <label for="client-phone">Phone:</label>
-        <input type="tel" id="client-phone" name="client-phone">
-        <br>
-        <label for="client-email">Email:</label>
-        <input type="email" id="client-email" name="client-email">
-    </section>
+        <div class="invoice-body">
 
-    <section>
-        <h2>Invoice Details</h2>
-        <label for="invoice-number">Invoice Number:</label>
-        <input type="text" id="invoice-number" name="invoice-number">
-        <br>
-        <label for="invoice-date">Invoice Date:</label>
-        <input type="date" id="invoice-date" name="invoice-date">
-    </section>
+            <!-- Seller & Client side by side -->
+            <div class="details-row">
+                <section>
+                    <h2>Seller Details</h2>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="seller-name">Business Name</label>
+                            <input type="text" id="seller-name" name="seller-name">
+                        </div>
+                        <div class="form-field">
+                            <label for="seller-gstin">GSTIN</label>
+                            <input type="text" id="seller-gstin" name="seller-gstin" maxlength="15">
+                        </div>
+                        <div class="form-field">
+                            <label for="seller-address">Address</label>
+                            <input type="text" id="seller-address" name="seller-address">
+                        </div>
+                        <div class="form-field">
+                            <label for="seller-city">City</label>
+                            <input type="text" id="seller-city" name="seller-city">
+                        </div>
+                        <div class="form-field">
+                            <label for="seller-state">State</label>
+                            <input type="text" id="seller-state" name="seller-state">
+                        </div>
+                        <div class="form-field">
+                            <label for="seller-pincode">PIN Code</label>
+                            <input type="text" id="seller-pincode" name="seller-pincode" pattern="[0-9]{6}" maxlength="6">
+                        </div>
+                        <div class="form-field">
+                            <label for="seller-phone">Phone</label>
+                            <input type="tel" id="seller-phone" name="seller-phone">
+                        </div>
+                        <div class="form-field">
+                            <label for="seller-email">Email</label>
+                            <input type="email" id="seller-email" name="seller-email">
+                        </div>
+                    </div>
+                </section>
 
-    <section>
-        <h2>Line Items</h2>
-        <table id="line-items-table">
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th>HSN/SAC Code</th>
-                    <th>Quantity</th>
-                    <th>Unit</th>
-                    <th>Rate (₹)</th>
-                    <th>Amount (₹)</th>
-                    <th>GST Rate (%)</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="line-items-body">
-                <tr>
-                    <td><input type="text" name="item-description"></td>
-                    <td><input type="text" name="item-hsn"></td>
-                    <td><input type="number" name="item-quantity" min="0"></td>
-                    <td><input type="text" name="item-unit"></td>
-                    <td><input type="number" name="item-rate" min="0" step="0.01"></td>
-                    <td><input type="number" name="item-amount" min="0" step="0.01" readonly></td>
-                    <td>
-                        <select name="item-gst-rate">
-                            <option value="0">0%</option>
-                            <option value="5">5%</option>
-                            <option value="12">12%</option>
-                            <option value="18" selected>18%</option>
-                            <option value="28">28%</option>
-                        </select>
-                    </td>
-                    <td><button type="button" class="remove-row-btn">Remove Row</button></td>
-                </tr>
-            </tbody>
-        </table>
-        <button type="button" id="add-row-btn">Add Row</button>
-    </section>
+                <section>
+                    <h2>Client Details</h2>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="client-name">Client Name</label>
+                            <input type="text" id="client-name" name="client-name">
+                        </div>
+                        <div class="form-field">
+                            <label for="client-gstin">GSTIN</label>
+                            <input type="text" id="client-gstin" name="client-gstin" maxlength="15">
+                        </div>
+                        <div class="form-field">
+                            <label for="client-address">Address</label>
+                            <input type="text" id="client-address" name="client-address">
+                        </div>
+                        <div class="form-field">
+                            <label for="client-city">City</label>
+                            <input type="text" id="client-city" name="client-city">
+                        </div>
+                        <div class="form-field">
+                            <label for="client-state">State</label>
+                            <input type="text" id="client-state" name="client-state">
+                        </div>
+                        <div class="form-field">
+                            <label for="client-pincode">PIN Code</label>
+                            <input type="text" id="client-pincode" name="client-pincode" pattern="[0-9]{6}" maxlength="6">
+                        </div>
+                        <div class="form-field">
+                            <label for="client-phone">Phone</label>
+                            <input type="tel" id="client-phone" name="client-phone">
+                        </div>
+                        <div class="form-field">
+                            <label for="client-email">Email</label>
+                            <input type="email" id="client-email" name="client-email">
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section>
+                <h2>Line Items</h2>
+                <table id="line-items-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>HSN/SAC</th>
+                            <th>Qty</th>
+                            <th>Unit</th>
+                            <th>Rate (₹)</th>
+                            <th>Amount (₹)</th>
+                            <th>GST %</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="line-items-body">
+                        <tr>
+                            <td><input type="text" name="item-description"></td>
+                            <td><input type="text" name="item-hsn"></td>
+                            <td><input type="number" name="item-quantity" min="0"></td>
+                            <td><input type="text" name="item-unit"></td>
+                            <td><input type="number" name="item-rate" min="0" step="0.01"></td>
+                            <td><input type="number" name="item-amount" min="0" step="0.01" readonly></td>
+                            <td>
+                                <select name="item-gst-rate">
+                                    <option value="0">0%</option>
+                                    <option value="5">5%</option>
+                                    <option value="12">12%</option>
+                                    <option value="18" selected>18%</option>
+                                    <option value="28">28%</option>
+                                </select>
+                            </td>
+                            <td><button type="button" class="remove-row-btn">Remove Row</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" id="add-row-btn">+ Add Row</button>
+            </section>
+
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
