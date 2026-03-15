@@ -146,7 +146,7 @@
                 }
                 var selects = newRow.querySelectorAll('select');
                 for (var j = 0; j < selects.length; j++) {
-                    selects[j].selectedIndex = 3; // Default to 18%
+                    selects[j].value = '18';
                 }
                 attachRowListeners(newRow);
                 tbody.appendChild(newRow);
