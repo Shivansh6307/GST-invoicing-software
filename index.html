@@ -429,6 +429,10 @@
             var tbody = document.getElementById('line-items-body');
             var addRowBtn = document.getElementById('add-row-btn');
 
+            // Auto-fill invoice date with today's date
+            var invoiceDateInput = document.getElementById('invoice-date');
+            invoiceDateInput.value = new Date().toISOString().split('T')[0];
+
             function calculateAmount(row) {
                 var quantity = parseFloat(row.querySelector('[name="item-quantity"]').value) || 0;
                 var rate = parseFloat(row.querySelector('[name="item-rate"]').value) || 0;
